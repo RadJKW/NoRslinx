@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <RootNamespace>NoRslinx.Domain</RootNamespace>
+        <AssemblyName>NoRslinx.Domain</AssemblyName>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="libplctag" Version="1.1.0" />
+      <PackageReference Include="MediatR" Version="9.0.0" />
+    </ItemGroup>
+
+</Project>
