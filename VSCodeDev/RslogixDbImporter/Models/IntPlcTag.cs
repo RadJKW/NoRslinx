@@ -1,9 +1,10 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace RslogixDbImporter.Models
 {
     public class IntPlcTag
     {
+        [JsonIgnore]
         public int Id { get; set; }
         public int PlcId { get; set; }
         public string? SymbolName { get; set; }
