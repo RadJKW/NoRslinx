@@ -1,0 +1,26 @@
+{
+  "plc": {
+    "connection_protocol": "ab_eip",
+    "description": "description",
+    "id": 1,
+    "ip_address": "192.168.0.23",
+    "location": "J.West office",
+    "name": "radjkw-dev-mlgx1100",
+    "program": "dev-plc2",
+    "tags": [
+      {
+        "address": "I:0/0",
+        "description": "Ensures Motor Contactor Actuated",
+        "id": 1,
+        "symbol": "motor_contact_check"
+      },
+      {
+        "address": "I:0/4",
+        "description": "Tap is in the neutral position",
+        "id": 2,
+        "symbol": "tap_switch_counter"
+      }
+    ],
+    "type": "slc500"
+  }
+}

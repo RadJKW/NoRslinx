@@ -1,0 +1,112 @@
+{
+  "Enums": [
+    {
+      "PlcType": [
+        {
+          "id": "0",
+          "name": "ControlLogix"
+        },
+        {
+          "id": 1,
+          "name": "Plc5"
+        },
+        {
+          "id": 2,
+          "name": "Slc500"
+        },
+        {
+          "id": 3,
+          "name": "LogixPccc"
+        },
+        {
+          "id": 4,
+          "name": "Micro800"
+        },
+        {
+          "id": 5,
+          "name": "MicroLogix"
+        },
+        {
+          "id": 6,
+          "name": "Omron"
+        }
+      ]
+    },
+    {
+      "Protocol": [
+        {
+          "id": "0",
+          "name": "ab_eip"
+        },
+        {
+          "id": 1,
+          "name": "modbus_tcp"
+        }
+      ]
+    },
+    {
+      "TagType": [
+        {
+          "id": "0",
+          "name": "Output"
+        },
+        {
+          "id": 1,
+          "name": "Input"
+        },
+        {
+          "id": 2,
+          "name": "Status"
+        },
+        {
+          "id": 3,
+          "name": "Binary"
+        },
+        {
+          "id": 4,
+          "name": "Timer"
+        },
+        {
+          "id": 5,
+          "name": "Counter"
+        },
+        {
+          "id": 6,
+          "name": "Control"
+        },
+        {
+          "id": 7,
+          "name": "Integer"
+        },
+        {
+          "id": 8,
+          "name": "Float"
+        }
+      ]
+    }
+  ],
+  "plc": {
+    "connection_protocol": "ab_eip",
+    "description": "description",
+    "id": 1,
+    "ip_address": "192.168.0.23",
+    "location": "J.West office",
+    "name": "radjkw-dev-mlgx1100",
+    "program": "dev-plc2",
+    "tags": [
+      {
+        "address": "I:0/0",
+        "description": "Ensures Motor Contactor Actuated",
+        "id": 1,
+        "symbol": "motor_contact_check"
+      },
+      {
+        "address": "I:0/4",
+        "description": "Tap is in the neutral position",
+        "id": 2,
+        "symbol": "tap_switch_counter"
+      }
+    ],
+    "type": "slc500"
+  }
+}
