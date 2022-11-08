@@ -8,15 +8,13 @@ using NoRslinx.Domain.Entities;
 
 namespace NoRslinx.Infrastructure.Services;
 
-public class RslogixDbImporter //: IRsLogixDbImporter
+public class RslogixDbImporter : IRsLogixDbImporter
 {
-    private readonly Uri _csvFilePath;
-    private readonly Uri _jsonFilePath;
-    private readonly int _addressColumn;
-    private readonly int _symbolColumn;
-    private readonly int[] _descriptionColumns;
+    public List<PlcTag> PlcTags => _plcTags;
+
     private readonly List<PlcTag> _plcTags = new();
-    private readonly MicrologixPlc _plc = new();
+    private bool _isValid = false;
+    private bool _isChild = false;
 
     /// <summary>
     ///    Initializes a new instance of the <see cref="RslogixDbImporter" /> class.
@@ -27,166 +25,67 @@ public class RslogixDbImporter //: IRsLogixDbImporter
     /// <param name="symbolColumn"></param>
     /// <param name="descriptionColumns"></param>
     /// <param name="plc"></param>
-    public RslogixDbImporter(Uri csvFilePath, Uri jsonFilePath, int addressColumn, int symbolColumn, int[] descriptionColumns, MicrologixPlc plc)
+    public void Convert(Uri csvFilePath, Uri jsonFilePath, int addressColumn, int symbolColumn, int[] descriptionColumns, MicrologixPlc plc)
     {
-        _csvFilePath = csvFilePath;
-        _jsonFilePath = jsonFilePath;
-        _addressColumn = addressColumn;
-        _symbolColumn = symbolColumn;
-        _descriptionColumns = descriptionColumns;
-        _plc = plc;
-    }
+        // if the plc is null throw an exception
+        if (plc == null)
+        {
+            throw new ArgumentNullException(nameof(plc));
+        }
 
-    public MicrologixPlc Plc => _plc;
-    public List<PlcTag> PlcTags => _plcTags;
+        plc.Program = csvFilePath.Segments[^1];
 
-
-    /// <summary>
-    /// Converts the CSV file to a JSON file
-    /// </summary>
-    public void Convert()
-    {
-        // overwrite the json file data with string.empty
-        File.WriteAllText(_jsonFilePath.LocalPath, string.Empty);
-
-
-        // step 1 - assign the file name to the _plc.Program property
-        _plc.Program = _csvFilePath.Segments[^1];
-        // step 2 
-        // - read the csv file and create a IntPlcTag for each row
-        // - if the PlcTag has and empty string in _symbolColumn, do not add it to the list
-        using var reader = new StreamReader(_csvFilePath.LocalPath);
+        using var reader = new StreamReader(csvFilePath.LocalPath);
         while (!reader.EndOfStream)
         {
             var line = reader.ReadLine();
             var values = line!.Split(',');
-            if (values[_symbolColumn] != string.Empty)
+
+            if (values[symbolColumn] != string.Empty)
             {
-                var plcTag = new PlcTag
-                {
-                    Address = values[_addressColumn],
-                    SymbolName = values[_symbolColumn],
-                    Description = GetDescription(values),
-                    PlcId = _plc.Id
-
-                };
-
-                _plcTags.Add(plcTag);
+                _isValid = true;
+                _isChild = false;
+            }
+            else if (values[addressColumn].Split('/')[0] == _plcTags[^1].Address)
+            {
+                _isValid = true;
+                _isChild = true;
             }
 
-            // - if the Tag has no symbolName but is associated with the previous tag
-            // - add the tag to the list of tags
-            else if (values[_addressColumn].Split('/')[0] == _plcTags[^1].Address)
+            if (_isValid)
             {
+                var useCsv = values[symbolColumn];
                 var plcTag = new PlcTag
                 {
-                    Address = values[_addressColumn],
-                    SymbolName = _plcTags[^1].SymbolName + $"_{values[_addressColumn].Split('/')[1]}",
-                    Description = GetDescription(values),
-                    PlcId = _plc.Id
+                    Address = values[addressColumn],
+                    SymbolName = _isChild ? _plcTags[^1].SymbolName + $"_{values[addressColumn].Split('/')[1]}" : useCsv,
+                    Description = GetDescription(values, descriptionColumns),
+                    PlcId = plc.Id
 
                 };
 
                 _plcTags.Add(plcTag);
+                _isValid = false;
+                _isChild = false;
             }
         }
-
-        // step 3 - assign the list of IntPlcTags to _plc.Tags
-        _plc.PlcTags = _plcTags;
-
-        // step 4 - erase the json files contents if any
-        File.WriteAllText(_jsonFilePath.LocalPath, string.Empty);
-
-
-        // step 5 - serialize the _plc object to a JSON file
-        var json = JsonConvert.SerializeObject(_plc, Formatting.Indented);
-        File.WriteAllText(_jsonFilePath.LocalPath, json);
+        plc.PlcTags = _plcTags;
+        File.WriteAllText(jsonFilePath.LocalPath, string.Empty);
+        var json = JsonConvert.SerializeObject(plc, Formatting.Indented);
+        File.WriteAllText(jsonFilePath.LocalPath, json);
     }
 
-    private string GetDescription(string[] values)
+    private static string GetDescription(string[] values, int[] dataColumns)
     {
         var description = string.Empty;
-
-        foreach (var column in _descriptionColumns)
+        foreach (var column in dataColumns)
         {
-            description += values[column];
+            description += values[column] + " ";
         }
-
-
         return description
                 .Replace("\"", string.Empty)
                 .Replace("\\", string.Empty)
                 .Trim();
     }
 }
-
-
-
-
-
-/* public class RsLogixDbImporter : IRsLogixDbImporter
-{
-    public Uri CsvFilePath { get; set; } = null!;
-    public Uri JsonFilePath { get; set; } = null!;
-
-    private bool _isConverted = false;
-
-    public List<PlcTag> PlcTags { get; } = new();
-
-    public MicrologixPlc Plc
-    {
-        get
-        { // if the plc has tags 
-
-        }
-    }
-
-
-
-    public void Convert(int addressColumn, int symbolColumn, int[] descriptionColumns)
-    {
-        // step 1 - assign the name of the CSV file to _plc.Program
-        Plc.Program = CsvFilePath.Segments[^1];
-        // step 2 
-        // - read the csv file and create a IntPlcTag for each row
-        // - if the IntPlcTag has and empty string in _symbolColumn, do not add it to the list
-        using var reader = new StreamReader(CsvFilePath.LocalPath);
-        while (!reader.EndOfStream)
-        {
-            var line = reader.ReadLine();
-            var values = line!.Split(',');
-            if (values[symbolColumn] != string.Empty)
-            {
-                var intPlcTag = new PlcTag
-                {
-                    Address = values[addressColumn],
-                    SymbolName = values[symbolColumn],
-                    Description = string.Empty
-                };
-
-                // the description columns were split into multiple columns in the CSV file
-                // so we need to combine them into a single string
-
-                foreach (var descriptionColumn in descriptionColumns)
-                {
-                    intPlcTag.Description += values[descriptionColumn];
-                }
-
-                PlcTags.Add(intPlcTag);
-            }
-        }
-
-        // step 3 - assign the list of IntPlcTags to _plc.Tags
-        Plc.PlcTags = PlcTags;
-
-        // step 4 - serialize the _plc object to a JSON file
-        var json = JsonConvert.SerializeObject(Plc, Formatting.Indented);
-        File.WriteAllText(JsonFilePath.LocalPath, json);
-        _isConverted = true;
-    }
-
-    // after the JSON file is created, allow the user to request the MicrologixPlc
-    // object from the importer
-}
-*/
 

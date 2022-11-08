@@ -8,9 +8,8 @@ namespace NoRslinx.Application.Common.Interfaces;
 
 public interface IRsLogixDbImporter
 {
-    // only return the Plc without the list of tags when the user requests it
-    MicrologixPlc Plc { get; }
-
-    public void Convert();
+    // return the list of PlcTags
+    List<PlcTag> PlcTags { get; }
+    public void Convert(Uri csvFilePath, Uri jsonFilePath, int addressColumn, int symbolColumn, int[] descriptionColumns, MicrologixPlc plc);
 
 }

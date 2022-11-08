@@ -1,4 +1,5 @@
-﻿using NoRslinx.Application;
+﻿using Newtonsoft.Json;
+using NoRslinx.Application;
 using NoRslinx.Infrastructure;
 using NoRslinx.Infrastructure.Persistence;
 using WebApi;

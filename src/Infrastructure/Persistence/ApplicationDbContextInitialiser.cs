@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Security.Cryptography.Xml;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NoRslinx.Application.Common.Interfaces;
 using NoRslinx.Domain.Entities;
@@ -9,13 +10,13 @@ public class ApplicationDbContextInitialiser
 {
     private readonly ILogger<ApplicationDbContextInitialiser> _logger;
     private readonly ApplicationDbContext _context;
-    //private readonly IRsLogixDbImporter _logixImporter;
+    private readonly IRsLogixDbImporter _logixImporter;
 
-    public ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitialiser> logger, ApplicationDbContext context) // IRsLogixDbImporter logixImporter)
+    public ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitialiser> logger, ApplicationDbContext context, IRsLogixDbImporter logixImporter)
     {
         _logger = logger;
         _context = context;
-        //_logixImporter = logixImporter;
+        _logixImporter = logixImporter;
     }
 
     public async Task InitialiseAsync()
@@ -71,9 +72,7 @@ public class ApplicationDbContextInitialiser
 
         // Seed, if necessary
         // Default Plc for testing
-        var basePath = "C:/Users/jwest/source/NoRslinx-AbPlc/NoRslinx/";
-        var csvFilePath = new UriBuilder(basePath + "rslogix/DEV-PLC2.CSV").Uri;
-        var jsonFilePath = new UriBuilder(basePath + "rslogix/DEV-PLC2.JSON").Uri;
+
         var defaultPlc = new MicrologixPlc
         {
             Name = "RadJKW-MLGX1100",
@@ -94,27 +93,20 @@ public class ApplicationDbContextInitialiser
 
         if (!_context.PlcTags.Any())
         {
+            var basePath = new Uri("C:/Users/jwest/source/NoRslinx-AbPlc/NoRslinx/rslogix/");
+            var csvFilePath = new Uri(basePath, "DEV-PLC2.CSV");
+            var jsonFilePath = new Uri(basePath, "DEV-PLC2.JSON");
             var addressColumn = 0;
             var symbolColumn = 2;
             var descriptionColumns = new int[] { 3, 4, 5, 6, 7 };
 
-
-            //get the defualtPlc from the database so we can use its generated Id
-            // first check if it exists, if not, add it           
-
             var plcFromDb = _context.MicrologixPlcs.FirstOrDefault(x => x.Name == defaultPlc.Name);
 
+            _logixImporter.Convert(csvFilePath, jsonFilePath, addressColumn, symbolColumn, descriptionColumns, plcFromDb!);
 
-            var logixImporter = new RslogixDbImporter(csvFilePath, jsonFilePath, addressColumn, symbolColumn, descriptionColumns, plcFromDb!);
-            logixImporter.Convert();
-
-            // the tags are not added to the database yet. adjusting the json file
-            // 
-            var plcTags = logixImporter.PlcTags;
-
-            //add the tags to the database
-
+            var plcTags = _logixImporter.PlcTags;
             _context.PlcTags.AddRange(plcTags);
+
             await _context.SaveChangesAsync();
 
         }

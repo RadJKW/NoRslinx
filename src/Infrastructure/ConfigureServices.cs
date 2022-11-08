@@ -35,7 +35,7 @@ public static class ConfigureServices
 
         services.AddTransient<ICsvFileBuilder, CsvFileBuilder>();
 
-        //services.AddTransient<IRsLogixDbImporter, RslogixDbImporter>();
+        services.AddTransient<IRsLogixDbImporter, RslogixDbImporter>();
 
 
 

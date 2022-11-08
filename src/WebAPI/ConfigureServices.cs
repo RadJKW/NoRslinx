@@ -1,5 +1,6 @@
 ﻿using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using NoRslinx.Application.Common.Interfaces;
 using NoRslinx.Infrastructure.Persistence;
 using WebApi.Filters;
@@ -28,6 +29,9 @@ public static class ConfigureServices
         // Customise default API behaviour
         services.Configure<ApiBehaviorOptions>(options =>
             options.SuppressModelStateInvalidFilter = true);
+
+        //services.Configure<JsonSerializerSettings>(options =>
+        //    options.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
         services.AddSwaggerGen();
 
