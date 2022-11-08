@@ -9,6 +9,8 @@ public class TodoItemRecordMap : ClassMap<TodoItemRecord>
     {
         AutoMap(CultureInfo.InvariantCulture);
 
-        Map(m => m.Done).ConvertUsing(c => c.Done ? "Yes" : "No");
+        // convert the TodoItemRecord from bool to string
+        Map(m => m.Done).Convert(c => c.Value.Done ? "Yes" : "No");
+
     }
 }

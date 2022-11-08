@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace NoRslinx.Domain.Common;
 public abstract class BaseEntity
@@ -7,7 +8,7 @@ public abstract class BaseEntity
 
     private readonly List<BaseEvent> _domainEvents = new();
 
-    [NotMapped]
+    [NotMapped, JsonIgnore]
     public IReadOnlyCollection<BaseEvent> DomainEvents => _domainEvents.AsReadOnly();
 
     public void AddDomainEvent(BaseEvent domainEvent)

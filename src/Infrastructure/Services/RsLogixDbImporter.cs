@@ -81,7 +81,7 @@ public class RslogixDbImporter //: IRsLogixDbImporter
                 var plcTag = new PlcTag
                 {
                     Address = values[_addressColumn],
-                    SymbolName = _plcTags[^1].SymbolName,
+                    SymbolName = _plcTags[^1].SymbolName + $"_{values[_addressColumn].Split('/')[1]}",
                     Description = GetDescription(values),
                     PlcId = _plc.Id
 
