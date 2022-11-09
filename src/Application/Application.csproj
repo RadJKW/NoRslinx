@@ -21,6 +21,8 @@
 
     <ItemGroup>
       <Folder Include="Common\Security\" />
+      <Folder Include="MicrologixPlcs\" />
+      <Folder Include="PlcTags\" />
     </ItemGroup>
 
 </Project>

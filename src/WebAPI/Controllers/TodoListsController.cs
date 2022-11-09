@@ -9,12 +9,21 @@ using NoRslinx.Application.TodoLists.Queries.GetTodos;
 namespace WebApi.Controllers;
 public class TodoListsController : ApiControllerBase
 {
+    /// <summary>
+    /// Get All Todos (Virtual Model)
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
     public async Task<ActionResult<TodosVm>> Get()
     {
         return await Mediator.Send(new GetTodosQuery());
     }
 
+    /// <summary>
+    /// Export single TodoList to CSV file
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet("{id}")]
     public async Task<FileResult> Get(int id)
     {
