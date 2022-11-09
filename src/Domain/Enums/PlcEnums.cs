@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 namespace NoRslinx.Domain.Enums;
-public enum PlcType
+public enum PlcType : int
 {
     /// <summary>
     /// Control Logix-class PLC. Synonym for lgx, logix, controllogix, contrologix, compactlogix, clgx.
@@ -44,7 +44,7 @@ public enum PlcType
 /// <summary>
 /// Communication Protocols supported by the library
 /// </summary>
-public enum Protocol
+public enum Protocol : int
 {
     /// <summary>
     /// Allen-Bradley specific flavor of EIP
@@ -57,7 +57,7 @@ public enum Protocol
     modbus_tcp = 1
 }
 
-public enum DebugLevel
+public enum DebugLevel : int
 {
     /// <summary>
     /// No debug messages

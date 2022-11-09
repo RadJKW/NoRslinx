@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using NoRslinx.Application.Common.Interfaces;
 using NoRslinx.Domain.Entities;
+using NoRslinx.Domain.Enums;
 using NoRslinx.Infrastructure.Common;
 using NoRslinx.Infrastructure.Persistence.Interceptors;
 
@@ -32,6 +33,10 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<MicrologixPlc> MicrologixPlcs => Set<MicrologixPlc>();
 
     public DbSet<PlcTag> PlcTags => Set<PlcTag>();
+
+    public DbSet<TagType> TagTypes => Set<TagType>();
+
+
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

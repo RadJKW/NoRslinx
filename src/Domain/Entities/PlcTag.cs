@@ -7,14 +7,13 @@ using Newtonsoft.Json;
 namespace NoRslinx.Domain.Entities;
 public class PlcTag : BaseAuditableEntity
 {
+    private bool _value;
     public int PlcId { get; set; }
     public string? SymbolName { get; set; }
     public string? Address { get; set; }
-
     public string? Description { get; set; }
-
-
-    private bool _value;
+    public TagTypeId TagTypeId { get; set; }
+    public TagType? TagType { get; set; }
 
     public bool Value
     {
@@ -31,5 +30,12 @@ public class PlcTag : BaseAuditableEntity
 
     [JsonIgnore]
     public MicrologixPlc Plc { get; set; } = null!;
+}
+
+public class TagType
+{
+    public TagTypeId TagTypeId { get; set; }
+    public string? Name { get; set; }
+
 }
 

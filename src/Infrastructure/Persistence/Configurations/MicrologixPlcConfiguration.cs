@@ -34,15 +34,15 @@ public class MicrologixPlcConfiguration : IEntityTypeConfiguration<MicrologixPlc
         builder.Property(t => t.Program)
             .HasMaxLength(50);
 
-        // set the Timout property to time(0)
-        builder.Property(t => t.Timeout)
-            .HasColumnType("time(0)");
+        //// set the Timout property to time(0)
+        //builder.Property(t => t.Timeout)
+        //    .HasColumnType("time(0)");
 
-        builder.Property(t => t.Created)
-            .HasColumnType("datetime2(0)");
+        //builder.Property(t => t.Created)
+        //    .HasColumnType("datetime2(0)");
 
-        builder.Property(t => t.LastModified)
-            .HasColumnType("datetime2(0)");
+        //builder.Property(t => t.LastModified)
+        //    .HasColumnType("datetime2(0)");
 
 
         // ensure that no two plc's can have the same IpAddress

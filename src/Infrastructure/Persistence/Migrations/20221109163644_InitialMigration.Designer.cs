@@ -12,7 +12,7 @@ using NoRslinx.Infrastructure.Persistence;
 namespace NoRslinx.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221108205836_InitialMigration")]
+    [Migration("20221109163644_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -98,7 +98,7 @@ namespace NoRslinx.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2(0)");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -107,7 +107,7 @@ namespace NoRslinx.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2(0)");
 
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
@@ -118,6 +118,9 @@ namespace NoRslinx.Infrastructure.Persistence.Migrations
                     b.Property<string>("SymbolName")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int>("TagTypeId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("Value")
                         .HasColumnType("bit");
 
@@ -125,11 +128,84 @@ namespace NoRslinx.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("PlcId");
 
+                    b.HasIndex("TagTypeId");
+
                     b.HasIndex("SymbolName", "PlcId")
                         .IsUnique()
                         .HasFilter("[SymbolName] IS NOT NULL");
 
                     b.ToTable("PlcTags");
+                });
+
+            modelBuilder.Entity("NoRslinx.Domain.Entities.TagType", b =>
+                {
+                    b.Property<int>("TagTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("TagType");
+
+                    b.HasKey("TagTypeId");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasFilter("[TagType] IS NOT NULL");
+
+                    b.ToTable("TagTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            TagTypeId = 0,
+                            Name = "Output"
+                        },
+                        new
+                        {
+                            TagTypeId = 1,
+                            Name = "Input"
+                        },
+                        new
+                        {
+                            TagTypeId = 2,
+                            Name = "Status"
+                        },
+                        new
+                        {
+                            TagTypeId = 3,
+                            Name = "Binary"
+                        },
+                        new
+                        {
+                            TagTypeId = 4,
+                            Name = "Timer"
+                        },
+                        new
+                        {
+                            TagTypeId = 5,
+                            Name = "Counter"
+                        },
+                        new
+                        {
+                            TagTypeId = 6,
+                            Name = "Control"
+                        },
+                        new
+                        {
+                            TagTypeId = 7,
+                            Name = "Integer"
+                        },
+                        new
+                        {
+                            TagTypeId = 8,
+                            Name = "Float"
+                        },
+                        new
+                        {
+                            TagTypeId = 99,
+                            Name = "Unknown"
+                        });
                 });
 
             modelBuilder.Entity("NoRslinx.Domain.Entities.TodoItem", b =>
@@ -141,7 +217,7 @@ namespace NoRslinx.Infrastructure.Persistence.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2(0)");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -150,7 +226,7 @@ namespace NoRslinx.Infrastructure.Persistence.Migrations
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2(0)");
 
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
@@ -188,13 +264,13 @@ namespace NoRslinx.Infrastructure.Persistence.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2(0)");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2(0)");
 
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
@@ -217,7 +293,15 @@ namespace NoRslinx.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("NoRslinx.Domain.Entities.TagType", "TagType")
+                        .WithMany()
+                        .HasForeignKey("TagTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Plc");
+
+                    b.Navigation("TagType");
                 });
 
             modelBuilder.Entity("NoRslinx.Domain.Entities.TodoItem", b =>

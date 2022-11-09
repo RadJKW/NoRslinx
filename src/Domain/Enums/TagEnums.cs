@@ -3,8 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 namespace NoRslinx.Domain.Enums;
-
-public enum TagType
+public enum TagTypeId : int
 {
     Output = 0,
     Input = 1,
@@ -15,4 +14,5 @@ public enum TagType
     Control = 6,
     Integer = 7,
     Float = 8,
+    Unknown = 99
 }

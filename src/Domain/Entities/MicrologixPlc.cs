@@ -1,7 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
-// MudBlazor licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
-
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using NoRslinx.Domain.Entities;
 using NoRslinx.Domain.Enums;
 
@@ -77,6 +74,8 @@ public class MicrologixPlc : BaseAuditableEntity
     public PlcType PlcType { get; set; } = PlcType.Slc500;
     public Protocol Protocol { get; set; } = Protocol.ab_eip;
 
+
+    [Column(TypeName = "time(0)")]
     public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(5);
 
     public DebugLevel DebugLevel { get; set; } = DebugLevel.None;

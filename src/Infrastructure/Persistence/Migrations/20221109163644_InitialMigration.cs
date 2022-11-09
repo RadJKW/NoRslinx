@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace NoRslinx.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
@@ -37,6 +39,18 @@ namespace NoRslinx.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TagTypes",
+                columns: table => new
+                {
+                    TagTypeId = table.Column<int>(type: "int", nullable: false),
+                    TagType = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TagTypes", x => x.TagTypeId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TodoLists",
                 columns: table => new
                 {
@@ -44,9 +58,9 @@ namespace NoRslinx.Infrastructure.Persistence.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     ColourCode = table.Column<string>(name: "Colour_Code", type: "nvarchar(max)", nullable: false),
-                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Created = table.Column<DateTime>(type: "datetime2(0)", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastModified = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastModified = table.Column<DateTime>(type: "datetime2(0)", nullable: true),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -64,10 +78,11 @@ namespace NoRslinx.Infrastructure.Persistence.Migrations
                     SymbolName = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TagTypeId = table.Column<int>(type: "int", nullable: false),
                     Value = table.Column<bool>(type: "bit", nullable: false),
-                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Created = table.Column<DateTime>(type: "datetime2(0)", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastModified = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastModified = table.Column<DateTime>(type: "datetime2(0)", nullable: true),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -78,6 +93,12 @@ namespace NoRslinx.Infrastructure.Persistence.Migrations
                         column: x => x.PlcId,
                         principalTable: "MicrologixPlcs",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PlcTags_TagTypes_TagTypeId",
+                        column: x => x.TagTypeId,
+                        principalTable: "TagTypes",
+                        principalColumn: "TagTypeId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -93,9 +114,9 @@ namespace NoRslinx.Infrastructure.Persistence.Migrations
                     Priority = table.Column<int>(type: "int", nullable: false),
                     Reminder = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Done = table.Column<bool>(type: "bit", nullable: false),
-                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Created = table.Column<DateTime>(type: "datetime2(0)", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastModified = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastModified = table.Column<DateTime>(type: "datetime2(0)", nullable: true),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -107,6 +128,23 @@ namespace NoRslinx.Infrastructure.Persistence.Migrations
                         principalTable: "TodoLists",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "TagTypes",
+                columns: new[] { "TagTypeId", "TagType" },
+                values: new object[,]
+                {
+                    { 0, "Output" },
+                    { 1, "Input" },
+                    { 2, "Status" },
+                    { 3, "Binary" },
+                    { 4, "Timer" },
+                    { 5, "Counter" },
+                    { 6, "Control" },
+                    { 7, "Integer" },
+                    { 8, "Float" },
+                    { 99, "Unknown" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -128,6 +166,18 @@ namespace NoRslinx.Infrastructure.Persistence.Migrations
                 filter: "[SymbolName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PlcTags_TagTypeId",
+                table: "PlcTags",
+                column: "TagTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TagTypes_TagType",
+                table: "TagTypes",
+                column: "TagType",
+                unique: true,
+                filter: "[TagType] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TodoItems_ListId",
                 table: "TodoItems",
                 column: "ListId");
@@ -144,6 +194,9 @@ namespace NoRslinx.Infrastructure.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "MicrologixPlcs");
+
+            migrationBuilder.DropTable(
+                name: "TagTypes");
 
             migrationBuilder.DropTable(
                 name: "TodoLists");

@@ -5,6 +5,7 @@
 using Newtonsoft.Json;
 using NoRslinx.Application.Common.Interfaces;
 using NoRslinx.Domain.Entities;
+using NoRslinx.Domain.Enums;
 
 namespace NoRslinx.Infrastructure.Services;
 
@@ -60,7 +61,8 @@ public class RslogixDbImporter : IRsLogixDbImporter
                     Address = values[addressColumn],
                     SymbolName = _isChild ? _plcTags[^1].SymbolName + $"_{values[addressColumn].Split('/')[1]}" : useCsv,
                     Description = GetDescription(values, descriptionColumns),
-                    PlcId = plc.Id
+                    PlcId = plc.Id,
+                    TagTypeId = GetTagType(values[addressColumn])
 
                 };
 
@@ -73,6 +75,27 @@ public class RslogixDbImporter : IRsLogixDbImporter
         File.WriteAllText(jsonFilePath.LocalPath, string.Empty);
         var json = JsonConvert.SerializeObject(plc, Formatting.Indented);
         File.WriteAllText(jsonFilePath.LocalPath, json);
+    }
+
+    private static TagTypeId GetTagType(string address)
+    {
+        // get teh first letter of the address
+        var firstLetter = address[0];
+
+        // return the TagTypeId based on the first letter of the address
+        return firstLetter switch
+        {
+            'B' => TagTypeId.Binary,
+            'I' => TagTypeId.Input,
+            'O' => TagTypeId.Output,
+            'S' => TagTypeId.Status,
+            'T' => TagTypeId.Timer,
+            'C' => TagTypeId.Counter,
+            'R' => TagTypeId.Control,
+            'N' => TagTypeId.Integer,
+            _ => TagTypeId.Unknown
+        };
+
     }
 
     private static string GetDescription(string[] values, int[] dataColumns)
