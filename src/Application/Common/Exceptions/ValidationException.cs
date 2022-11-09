@@ -1,4 +1,5 @@
-﻿using FluentValidation.Results;
+﻿using System.Runtime.Serialization;
+using FluentValidation.Results;
 
 namespace NoRslinx.Application.Common.Exceptions;
 public class ValidationException : Exception
@@ -17,5 +18,17 @@ public class ValidationException : Exception
             .ToDictionary(failureGroup => failureGroup.Key, failureGroup => failureGroup.ToArray());
     }
 
-    public IDictionary<string, string[]> Errors { get; }
+    public ValidationException(string? message) : base(message)
+    {
+    }
+
+    public ValidationException(string? message, Exception? innerException) : base(message, innerException)
+    {
+    }
+
+    protected ValidationException(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
+    }
+
+    public IDictionary<string, string[]> Errors { get; } = new Dictionary<string, string[]>();
 }
