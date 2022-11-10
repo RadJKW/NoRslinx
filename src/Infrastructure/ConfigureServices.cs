@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NoRslinx.Application.Common.Interfaces;
-using NoRslinx.Infrastructure.Files;
 using NoRslinx.Infrastructure.Persistence;
 using NoRslinx.Infrastructure.Persistence.Interceptors;
 using NoRslinx.Infrastructure.Services;
@@ -33,7 +32,7 @@ public static class ConfigureServices
 
         services.AddTransient<IDateTime, DateTimeService>();
 
-        services.AddTransient<ICsvFileBuilder, CsvFileBuilder>();
+        services.AddTransient<ICsvService, CsvService>();
 
         services.AddTransient<IRsLogixDbImporter, RslogixDbImporter>();
 

@@ -36,7 +36,7 @@ public static class ConfigureServices
             options.SwaggerDoc("v1", new OpenApiInfo
             {
                 Version = "v1",
-                Title = "Plc_PlcTags API",
+                Title = "MicroLogix PLC - API",
                 Description = "API for Plcs and PlcTags on the PLC",
                 Contact = new OpenApiContact
                 {

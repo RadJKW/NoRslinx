@@ -7,6 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Compile Remove="Controllers\TodoItemsController.cs" />
+      <Compile Remove="Controllers\TodoListsController.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
         <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.0" />

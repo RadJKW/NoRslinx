@@ -10,35 +10,6 @@ using NoRslinx.Domain.Entities;
 
 namespace NoRslinx.Application.MicrologixPlcs
 {
-
-    #region GetPlcById
-    public record GetPlcQuery(int Id) : IRequest<PlcListDetails>;
-    public class GetPlcQueryHandler : IRequestHandler<GetPlcQuery, PlcListDetails>
-    {
-        private readonly IApplicationDbContext _context;
-        private readonly IMapper _mapper;
-
-        public GetPlcQueryHandler(IApplicationDbContext context, IMapper mapper)
-        {
-            _context = context;
-            _mapper = mapper;
-        }
-
-        public async Task<PlcListDetails> Handle(GetPlcQuery request, CancellationToken cancellationToken)
-        {
-            return new PlcListDetails
-            {
-                Plcs = await _context.MicrologixPlcs
-                    .AsNoTracking()
-                    .Include(p => p.PlcTags.Where(p => p.PlcId == request.Id))
-                    .Where(p => p.Id == request.Id)
-                    .ProjectToListAsync<DetailsPlcDto>(_mapper.ConfigurationProvider)
-            };
-        }
-    }
-
-    #endregion
-
     #region GetPlcs
 
     public record GetPlcsQuery : IRequest<PlcList>;
@@ -61,6 +32,34 @@ namespace NoRslinx.Application.MicrologixPlcs
                     .AsNoTracking()
                     .ProjectTo<PlcDto>(_mapper.ConfigurationProvider)
                     .ToListAsync(cancellationToken)
+            };
+        }
+    }
+
+    #endregion
+
+    #region GetPlcById
+    public record GetPlcQuery(int Id) : IRequest<PlcDetailsList>;
+    public class GetPlcQueryHandler : IRequestHandler<GetPlcQuery, PlcDetailsList>
+    {
+        private readonly IApplicationDbContext _context;
+        private readonly IMapper _mapper;
+
+        public GetPlcQueryHandler(IApplicationDbContext context, IMapper mapper)
+        {
+            _context = context;
+            _mapper = mapper;
+        }
+
+        public async Task<PlcDetailsList> Handle(GetPlcQuery request, CancellationToken cancellationToken)
+        {
+            return new PlcDetailsList
+            {
+                Plcs = await _context.MicrologixPlcs
+                    .AsNoTracking()
+                    .Include(p => p.PlcTags.Where(p => p.PlcId == request.Id))
+                    .Where(p => p.Id == request.Id)
+                    .ProjectToListAsync<DetailsPlcDto>(_mapper.ConfigurationProvider)
             };
         }
     }
@@ -198,7 +197,7 @@ namespace NoRslinx.Application.MicrologixPlcs
         public DetailsPlcDto()
         {
 
-            Tags = new List<DetailsTagDto>();
+            Tags = new List<TagDetailsDto>();
         }
 
         #region ---Properties---
@@ -219,7 +218,7 @@ namespace NoRslinx.Application.MicrologixPlcs
 
         public int DebugLevel { get; set; }
 
-        public IList<DetailsTagDto> Tags { get; set; }
+        public IList<TagDetailsDto> Tags { get; set; }
         #endregion
 
         public void Mapping(Profile profile)
@@ -232,7 +231,7 @@ namespace NoRslinx.Application.MicrologixPlcs
         }
     }
 
-    public class PlcListDetails
+    public class PlcDetailsList
     {
         //public IList<PlcType> PlcTypes { get; set; } = new List<PlcType>();
         //public IList<Protocol> PlcProtocols { get; set; } = new List<Protocol>();

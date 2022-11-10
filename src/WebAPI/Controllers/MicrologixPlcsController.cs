@@ -3,17 +3,17 @@ using NoRslinx.Application.Common.Models;
 using NoRslinx.Application.MicrologixPlcs;
 namespace WebApi.Controllers;
 
-public class MicrologixPlcController : ApiControllerBase
+public class MicrologixPlcsController : ApiControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<PlcList>> ListAllPlcs()
+    public async Task<ActionResult<PlcList>> Get()
     {
         return await Mediator.Send(new GetPlcsQuery());
 
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<PlcListDetails>> ListPlcDetails(int id)
+    public async Task<ActionResult<PlcDetailsList>> Get(int id)
     {
         return await Mediator.Send(new GetPlcQuery(id));
     }

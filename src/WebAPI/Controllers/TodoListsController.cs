@@ -27,8 +27,9 @@ public class TodoListsController : ApiControllerBase
     [HttpGet("{id}")]
     public async Task<FileResult> Get(int id)
     {
-        var vm = await Mediator.Send(new ExportTodosQuery { ListId = id });
+        var vm = await Mediator.Send(new ExportTodosQuery(ListId: id));
 
+        // if not null return file else return NotFound
         return File(vm.Content, vm.ContentType, vm.FileName);
     }
 
