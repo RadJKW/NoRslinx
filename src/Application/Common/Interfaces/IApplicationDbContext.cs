@@ -8,5 +8,9 @@ public interface IApplicationDbContext
 
     DbSet<TodoItem> TodoItems { get; }
 
+    DbSet<MicrologixPlc> MicrologixPlcs { get; }
+
+    DbSet<PlcTag> PlcTags { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }
