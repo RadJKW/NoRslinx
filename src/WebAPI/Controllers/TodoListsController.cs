@@ -32,12 +32,23 @@ public class TodoListsController : ApiControllerBase
         return File(vm.Content, vm.ContentType, vm.FileName);
     }
 
+    /// <summary>
+    /// Create TodoList
+    /// </summary>
+    /// <param name="command"></param>
+    /// <returns></returns>
     [HttpPost]
     public async Task<ActionResult<int>> Create(CreateTodoListCommand command)
     {
         return await Mediator.Send(command);
     }
 
+    /// <summary>
+    /// Update TodoList
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="command"></param>
+    /// <returns></returns>
     [HttpPut("{id}")]
     public async Task<ActionResult> Update(int id, UpdateTodoListCommand command)
     {
@@ -51,6 +62,11 @@ public class TodoListsController : ApiControllerBase
         return NoContent();
     }
 
+    /// <summary>
+    /// Delete TodoList
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {
