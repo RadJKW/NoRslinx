@@ -13,9 +13,7 @@ public static class ConfigureServices
     public static IServiceCollection AddWebAPIServices(this IServiceCollection services)
     {
         services.AddControllers(options =>
-        {
-            options.Filters.Add<ApiExceptionFilterAttribute>();
-        });
+            options.Filters.Add<ApiExceptionFilterAttribute>());
 
         services.AddEndpointsApiExplorer();
 
@@ -26,7 +24,7 @@ public static class ConfigureServices
 
         services.AddHttpContextAccessor();
 
-        services.AddFluentValidationAutoValidation();
+        services.AddFluentValidationClientsideAdapters();
 
         services.Configure<ApiBehaviorOptions>(options =>
             options.SuppressModelStateInvalidFilter = true);
@@ -39,7 +37,7 @@ public static class ConfigureServices
             {
                 Version = "v1",
                 Title = "Plc_PlcTags API",
-                Description = "API for Plcs and Tags on the PLC",
+                Description = "API for Plcs and PlcTags on the PLC",
                 Contact = new OpenApiContact
                 {
                     Name = "Jared West"
